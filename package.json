@@ -1,0 +1,17 @@
+{
+  "name": "nodejs-backend",
+  "version": "1.0.0",
+  "description": "Node.js server backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "test": "ts-node-dev --respawn src/index.ts"
+  },
+  "author": "Bennett Jann",
+  "license": "AGPL-3.0-or-later",
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.0.3"
+  }
+}
