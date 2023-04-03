@@ -1,0 +1,8 @@
+{
+  "watch": [
+    "src/*"
+  ],
+  "execMap": {
+    "ts": "rm -r dist/* && tsc && node dist/index.js; echo > /dev/null"
+  }
+}

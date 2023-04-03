@@ -22,11 +22,9 @@
 
 import http = require("node:http");
 import net = require("node:net");
+import path = require("node:path");
 
-interface Form {
-  fname: string;
-  lname: string;
-}
+import handlers = require("./handlers.json");
 
 const options: net.ListenOptions = {
   port: 8080,
@@ -34,36 +32,42 @@ const options: net.ListenOptions = {
 }
 
 const server: http.Server = http.createServer((req: http.IncomingMessage, res: http.ServerResponse): void => {
-  if (req.method === "POST") {
-    if (req.headers["content-type"] === "application/json") {
-      let body: string = "";
+  try {
+    if (req.url !== undefined) {
+      let handlerPath: string;
 
-      req.on("data", (chunk: Buffer | string | any): void => {
-        body += chunk.toString();
-      });
+      try {
+        handlerPath = require.resolve(path.join(__dirname, "handlers", req.url));
+      } catch (err: any) {
+        if (err.code === "MODULE_NOT_FOUND") {
+          res.statusCode = 400;
+          res.setHeader("Content-Type", "text/plain");
+          res.end("400 Bad Request\n");
+          return;
+        } else {
+          throw err;
+        }
+      }
 
-      req.on("end", (): void => {
-        const form: Form = JSON.parse(body);
-
-        res.statusCode = 200;
+      if (handlers.some((element: string): boolean => handlerPath !== path.join(__dirname, "handlers", element))) {
+        res.statusCode = 400;
         res.setHeader("Content-Type", "text/plain");
-        res.end(`Hello, ${form.fname} ${form.lname}!\n`);
-      });
+        res.end("400 Bad Request\n");
+        return;
+      };
 
-      req.on("error", (err: Error): void => {
-        res.statusCode = 500;
-        res.setHeader("Content-Type", "text/plain");
-        res.end("500 Internal Server\n");
-      });
+      require(handlerPath)(req, res);
     } else {
-      res.statusCode = 415;
+      res.statusCode = 400;
       res.setHeader("Content-Type", "text/plain");
-      res.end("415 Unsupported Media Type\n");
+      res.end("400 Bad Request\n");
     }
-  } else {
-    res.statusCode = 405;
+  } catch (err) {
+    console.log(err);
+
+    res.statusCode = 500;
     res.setHeader("Content-Type", "text/plain");
-    res.end("405 Method Not Allowed\n");
+    res.end("500 Internal Server Error\n");
   }
 });
 
