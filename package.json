@@ -4,14 +4,12 @@
   "description": "Node.js server backend",
   "main": "src/index.ts",
   "scripts": {
-    "start": "node dist/index.js",
-    "test": "nodemon"
+    "start": "node dist/index.js"
   },
   "author": "Bennett Jann",
   "license": "AGPL-3.0-or-later",
   "devDependencies": {
     "@types/node": "^18.15.11",
-    "nodemon": "^2.0.22",
     "typescript": "^5.0.3"
   }
 }
