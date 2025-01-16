@@ -39,6 +39,8 @@ module.exports = (req: http.IncomingMessage, res: http.ServerResponse): void => 
       req.on("end", (): void => {
         const form: Form = JSON.parse(body);
 
+        console.log(form);
+
         res.statusCode = 200;
         res.setHeader("Content-Type", "text/plain");
         res.end(`Hello, ${form.fname} ${form.lname}!\n`);
